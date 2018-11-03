@@ -65,7 +65,7 @@ public class DatabaseOperation {
 
             cursor = database.query("Device", new String[]{"device_name", "phone_number", "device_on", "device_off", "timer", "motion_enable", "status", "last_off"}, null, null, null, null, null);
 
-            if (cursor != null && cursor.getCount() == 0) {
+            if (cursor != null && cursor.getCount() != 0) {
 
                 while (cursor.moveToNext()) {
 

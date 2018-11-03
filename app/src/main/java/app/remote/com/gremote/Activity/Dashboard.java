@@ -56,7 +56,7 @@ public class Dashboard extends AppCompatActivity
         deviceRecyler = findViewById(R.id.device_recyler);
         deviceRecyler.setLayoutManager(new LinearLayoutManager(this));
 
-        DeviceRecyclerAdapter adapter = new DeviceRecyclerAdapter();
+        DeviceRecyclerAdapter adapter = new DeviceRecyclerAdapter(null, null);
 
         deviceRecyler.setAdapter(adapter);
 
