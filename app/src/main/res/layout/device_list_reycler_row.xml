@@ -36,15 +36,15 @@
 
 
                 <TextView
+                    android:id="@+id/status"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center_vertical|center"
                     android:text="Status: On"
                     android:textColor="#4CCFA5"
-                    android:textSize="17sp"
 
-                    />
+                    android:textSize="17sp" />
 
             </LinearLayout>
 
@@ -63,6 +63,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/device_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Motor 1"
@@ -70,6 +71,7 @@
                         android:textSize="18sp" />
 
                     <TextView
+                        android:id="@+id/last_off_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
@@ -91,6 +93,7 @@
                     android:layout_weight="1">
 
                     <ImageButton
+                        android:id="@+id/on_button"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -101,6 +104,7 @@
 
 
                     <ImageButton
+                        android:id="@+id/off_button"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -148,12 +152,12 @@
                     android:layout_weight="1">
 
                     <TextView
+                        android:id="@+id/timer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="1 hour 2 min"
-                        android:textSize="14sp"
                         android:textColor="@color/black"
-                        />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 
@@ -175,6 +179,7 @@
 
 
                 <Switch
+                    android:id="@+id/motion_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 

@@ -10,6 +10,7 @@ import android.widget.Toast;
 import app.remote.com.gremote.Database.DatabaseOperation;
 import app.remote.com.gremote.Model.Device;
 import app.remote.com.gremote.R;
+import app.remote.com.gremote.Util;
 
 public class AddDevice extends AppCompatActivity {
 
@@ -36,7 +37,7 @@ public class AddDevice extends AppCompatActivity {
                     boolean isSuccess = DatabaseOperation.saveDevice(AddDevice.this, new Device(deviceName.getText().toString(), 0,
                             Integer.parseInt(deviceOnCode.getText().toString()), Integer.parseInt(deviceOffCode.getText().toString()),
                             devicePhone.getText().toString(), 0, HourToMilli(Integer.parseInt(deviceTimer.getText().toString())),
-                            "Unknown"
+                            Util.getLastTime()
                     ));
 
                     if (isSuccess) {
