@@ -3,7 +3,6 @@ package app.remote.com.gremote.Database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -34,7 +33,9 @@ public class DatabaseOperation {
         try {
 
             SQLiteOpenHelper databaseHelper = new DatabaseHelper(context);
+
             SQLiteDatabase database = databaseHelper.getWritableDatabase();
+
             database.insertOrThrow("Device", null, contentValues);
 
             isSuccess = true;
@@ -87,14 +88,51 @@ public class DatabaseOperation {
 
             Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
 
-        }finally {
+        } finally {
 
-            if(cursor!=null)
-            cursor.close();
+            if (cursor != null)
+                cursor.close();
         }
 
 
         return devices;
     }
+
+    public static boolean changeMachineState(Context context, String code, String phoneNumber) {
+
+        boolean isSuccess;
+
+        try {
+
+            ContentValues contentValues = new ContentValues();
+
+            if (code.contains("ON")) {
+                contentValues.put("status", 1);
+            } else if (code.contains("OFF")) {
+                contentValues.put("status", 0);
+            }
+
+
+            SQLiteOpenHelper databaseHelper = new DatabaseHelper(context);
+
+            SQLiteDatabase database = databaseHelper.getWritableDatabase();
+
+
+            database.update("Device", contentValues, "phone_number=?", new String[]{phoneNumber});
+
+            isSuccess = true;
+
+        } catch (SQLiteException s) {
+
+            isSuccess = false;
+
+            Toast.makeText(context, s.getMessage(), Toast.LENGTH_SHORT).show();
+
+        }
+
+        return isSuccess;
+
+    }
+
 
 }

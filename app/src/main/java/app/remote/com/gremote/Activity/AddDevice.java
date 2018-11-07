@@ -81,8 +81,10 @@ public class AddDevice extends AppCompatActivity {
         for (EditText editText : editTexts) {
 
             if (editText.getText().length() == 0) {
+
                 count++;
                 Toast.makeText(this, editText.getTag().toString() + "can't be empty!", Toast.LENGTH_SHORT).show();
+
             }
 
         }

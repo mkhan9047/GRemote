@@ -58,7 +58,7 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter<DeviceRecyclerAd
               /*  HashMap<String, Integer> TimerData = Util.getTimeFromMillisecond(deviceList.get(hold).getTimerInMilli());
                 holder.timer.setText(String.format("%d hour %d min", TimerData.get("hour"), TimerData.get("min")));*/
 
-                Log.e("mim", String .valueOf( 1 + 1));
+               // Log.e("mim", String .valueOf( 1 + 1));
 
                 SetICOTimeOut(Util.getTimeFromMillisecond(deviceList.get(hold).getTimerInMilli() - 1000), bn.timer);
             }

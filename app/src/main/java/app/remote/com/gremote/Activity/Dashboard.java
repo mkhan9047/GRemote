@@ -91,4 +91,8 @@ public class Dashboard extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public void receivedSms(String message) {
+        Toast.makeText(this, "sms " + message , Toast.LENGTH_SHORT).show();
+    }
 }
