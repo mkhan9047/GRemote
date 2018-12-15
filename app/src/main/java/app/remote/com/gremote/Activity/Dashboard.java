@@ -16,17 +16,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.Toast;
+
+import java.util.Calendar;
+import java.util.Date;
 
 import app.remote.com.gremote.Adapter.DeviceRecyclerAdapter;
 import app.remote.com.gremote.Database.DatabaseOperation;
+import app.remote.com.gremote.Model.History;
 import app.remote.com.gremote.R;
 
 public class Dashboard extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    RecyclerView deviceRecyler;
-
+    public static RecyclerView deviceRecyler;
+    DeviceRecyclerAdapter adapter;
+    Button addDevice;
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,19 +56,31 @@ public class Dashboard extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.black));
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_dashboard);
 
+        addDevice = findViewById(R.id.btn_add_device);
 
         deviceRecyler = findViewById(R.id.device_recyler);
 
         deviceRecyler.setLayoutManager(new LinearLayoutManager(this));
 
-        DeviceRecyclerAdapter adapter = new DeviceRecyclerAdapter(DatabaseOperation.getDevice(this), null);
+        if (DatabaseOperation.getDevice(this).size() == 0) {
+
+            addDevice.setVisibility(View.VISIBLE);
+
+        } else {
+
+            addDevice.setVisibility(View.GONE);
+        }
+
+        adapter = new DeviceRecyclerAdapter(DatabaseOperation.getDevice(this), this);
 
         deviceRecyler.setAdapter(adapter);
 
         Toast.makeText(this, String.valueOf(DatabaseOperation.getDevice(this).size()), Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
@@ -74,6 +93,11 @@ public class Dashboard extends AppCompatActivity
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        navigationView.setCheckedItem(R.id.nav_dashboard);
+    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -84,6 +108,9 @@ public class Dashboard extends AppCompatActivity
         if (id == R.id.nav_add) {
             Intent intent = new Intent(this, AddDevice.class);
             startActivity(intent);
+        } else if (id == R.id.nav_history) {
+            Intent intent = new Intent(this, HistoryActivity.class);
+            startActivity(intent);
         }
 
 
@@ -93,6 +120,18 @@ public class Dashboard extends AppCompatActivity
     }
 
     public void receivedSms(String message) {
-        Toast.makeText(this, "sms " + message , Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "sms " + message, Toast.LENGTH_SHORT).show();
+    }
+
+    public void onAdd(View view) {
+        Intent intent = new Intent(this, AddDevice.class);
+        startActivity(intent);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
     }
 }

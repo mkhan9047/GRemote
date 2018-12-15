@@ -27,6 +27,7 @@
                 <ImageButton
                     android:id="@+id/back_button"
                     android:layout_width="40dp"
+                    android:onClick="OnBack"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
                     android:foreground="?selectableItemBackground"

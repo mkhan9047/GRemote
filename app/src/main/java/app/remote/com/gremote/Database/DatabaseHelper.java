@@ -34,6 +34,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 "timer INTEGER, \n" +
 
+                "last_timer INTEGER, \n" +
+
                 "motion_enable INTEGER, \n" +
 
                 "status INTEGER, \n" +
@@ -42,6 +44,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 ");";
 
+        String historyTable = "CREATE TABLE History (\n" +
+
+                "history_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, \n" +
+
+                "device_name TEXT, \n" +
+
+                "status TEXT, \n" +
+
+                "time TEXT, \n" +
+
+                "date TEXT \n" +
+
+                ");";
+
+        sqLiteDatabase.execSQL(historyTable);
 
         sqLiteDatabase.execSQL(device_table);
 

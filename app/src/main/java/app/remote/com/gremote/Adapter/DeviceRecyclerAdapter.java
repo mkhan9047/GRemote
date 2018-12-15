@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,10 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter<DeviceRecyclerAd
         this.context = context;
     }
 
+    public void setNewData(List<Device> list) {
+        deviceList = list;
+    }
+
     @NonNull
     @Override
     public DeviceHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -43,7 +48,7 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter<DeviceRecyclerAd
 
     @SuppressLint({"DefaultLocale", "SetTextI18n"})
     @Override
-    public void onBindViewHolder(@NonNull  DeviceHolder holder, int position) {
+    public void onBindViewHolder(@NonNull DeviceHolder holder, int position) {
 
         holder.deviceName.setText(deviceList.get(position).getDeviceName());
 
@@ -55,12 +60,8 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter<DeviceRecyclerAd
         holder.CountDowntimer = new CountDownTimer(deviceList.get(position).getTimerInMilli(), 1000) {
             @Override
             public void onTick(long l) {
-              /*  HashMap<String, Integer> TimerData = Util.getTimeFromMillisecond(deviceList.get(hold).getTimerInMilli());
-                holder.timer.setText(String.format("%d hour %d min", TimerData.get("hour"), TimerData.get("min")));*/
 
-               // Log.e("mim", String .valueOf( 1 + 1));
-
-                SetICOTimeOut(Util.getTimeFromMillisecond(deviceList.get(hold).getTimerInMilli() - 1000), bn.timer);
+                SetICOTimeOut(Util.getTimeFromMillisecond(l), bn.timer);
             }
 
             @Override
@@ -118,18 +119,32 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter<DeviceRecyclerAd
             onButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onButton.setImageResource(R.drawable.on_after);
-                    offButton.setImageResource(R.drawable.off_before);
-                    Util.sendSms(deviceList.get(getAdapterPosition()).getPhoneNumber(), String.valueOf(deviceList.get(getAdapterPosition()).getOnCode()));
+                 /*   onButton.setImageResource(R.drawable.on_after);
+                    offButton.setImageResource(R.drawable.off_before);*/
+
+                    if (deviceList.get(getAdapterPosition()).getDeviceStatus() == 1) {
+                        Toast.makeText(context, deviceList.get(getAdapterPosition()).getDeviceName() + " Is ON! Can't process the request!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Machine On Request is sent to " + deviceList.get(getAdapterPosition()).getDeviceName(), Toast.LENGTH_SHORT).show();
+                        Util.sendSms(deviceList.get(getAdapterPosition()).getPhoneNumber(), String.valueOf(deviceList.get(getAdapterPosition()).getOnCode()));
+                    }
+
                 }
             });
 
             offButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onButton.setImageResource(R.drawable.on_before);
-                    offButton.setImageResource(R.drawable.off_after);
-                    Util.sendSms(deviceList.get(getAdapterPosition()).getPhoneNumber(), String.valueOf(deviceList.get(getAdapterPosition()).getOffCode()));
+
+                    /*onButton.setImageResource(R.drawable.on_before);
+                    offButton.setImageResource(R.drawable.off_after);*/
+                    if (deviceList.get(getAdapterPosition()).getDeviceStatus() == 0) {
+                        Toast.makeText(context, deviceList.get(getAdapterPosition()).getDeviceName() + " Is OFF! Can't process the Request!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Machine Off Request is sent to " + deviceList.get(getAdapterPosition()).getDeviceName(), Toast.LENGTH_SHORT).show();
+                        Util.sendSms(deviceList.get(getAdapterPosition()).getPhoneNumber(), String.valueOf(deviceList.get(getAdapterPosition()).getOffCode()));
+                    }
+
                 }
             });
         }

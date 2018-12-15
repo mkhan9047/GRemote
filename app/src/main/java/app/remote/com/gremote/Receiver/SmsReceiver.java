@@ -11,13 +11,14 @@ import android.widget.Toast;
 import java.util.List;
 
 import app.remote.com.gremote.Activity.Dashboard;
+import app.remote.com.gremote.Adapter.DeviceRecyclerAdapter;
 import app.remote.com.gremote.Database.DatabaseOperation;
 import app.remote.com.gremote.Model.Device;
 
-public class SmsReceiver extends BroadcastReceiver{
+public class SmsReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        List<Device> devices;
         Bundle b = intent.getExtras();
 
         try {
@@ -33,18 +34,27 @@ public class SmsReceiver extends BroadcastReceiver{
                     String phoneNumber = currentMessage
                             .getDisplayOriginatingAddress();
 
-                    String senderNum = phoneNumber;
+                    String senderNum =  phoneNumber;
 
                     String message = currentMessage.getDisplayMessageBody();
 
+                    devices = DatabaseOperation.getDevice(context);
 
-                    List<Device> devices = DatabaseOperation.getDevice(context);
+                    for (Device device : devices) {
 
-                    for(Device device : devices){
+                        if (device.getPhoneNumber().equals(senderNum)) {
 
-                        if(device.getPhoneNumber().equals(senderNum)){
+                            boolean isSucess = DatabaseOperation.changeMachineState(context, message, phoneNumber, device.getDeviceName());
 
-                            DatabaseOperation.changeMachineState(context, message, phoneNumber);
+                            if (isSucess) {
+
+                                devices = DatabaseOperation.getDevice(context);
+
+                                DeviceRecyclerAdapter adapter = new DeviceRecyclerAdapter(devices, context);
+
+                                Dashboard.deviceRecyler.setAdapter(adapter);
+
+                            }
 
                         }
 

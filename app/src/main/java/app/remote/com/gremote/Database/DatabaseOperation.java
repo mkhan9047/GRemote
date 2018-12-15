@@ -12,13 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.remote.com.gremote.Model.Device;
+import app.remote.com.gremote.Model.History;
+import app.remote.com.gremote.Util;
+
 
 public class DatabaseOperation {
 
     public static boolean saveDevice(Context context, Device device) {
 
         boolean isSuccess = false;
-
 
         ContentValues contentValues = new ContentValues();
         contentValues.put("device_name", device.getDeviceName());
@@ -33,21 +35,14 @@ public class DatabaseOperation {
         try {
 
             SQLiteOpenHelper databaseHelper = new DatabaseHelper(context);
-
             SQLiteDatabase database = databaseHelper.getWritableDatabase();
-
             database.insertOrThrow("Device", null, contentValues);
-
             isSuccess = true;
 
         } catch (SQLiteException s) {
-
             isSuccess = false;
-
             Toast.makeText(context, "Data Should be unique!", Toast.LENGTH_SHORT).show();
-
         }
-
 
         return isSuccess;
 
@@ -82,6 +77,7 @@ public class DatabaseOperation {
                 }
 
             } else {
+
                 Toast.makeText(context, "No Devices found!", Toast.LENGTH_SHORT).show();
             }
         } catch (SQLiteException e) {
@@ -98,7 +94,59 @@ public class DatabaseOperation {
         return devices;
     }
 
-    public static boolean changeMachineState(Context context, String code, String phoneNumber) {
+    public static boolean changeMachineState(Context context, String code, String phoneNumber, String device_name) {
+
+        boolean isSuccess;
+        boolean isTimeUpdateSuccess = false;
+
+        try {
+
+            ContentValues contentValues = new ContentValues();
+
+            if (code.contains("ON")) {
+
+                contentValues.put("status", 1);
+
+                /*setting history table */
+
+                insertHistory(context, "ON", device_name, Util.getTime(), Util.getDate());
+
+                isTimeUpdateSuccess = true;
+
+            } else if (code.contains("OFF")) {
+
+                contentValues.put("status", 0);
+
+                /*setting history table */
+
+                insertHistory(context, "OFF", device_name, Util.getTime(), Util.getDate());
+
+                isTimeUpdateSuccess = UpdateLastOffTime(context, phoneNumber);
+            }
+
+
+            SQLiteOpenHelper databaseHelper = new DatabaseHelper(context);
+
+            SQLiteDatabase database = databaseHelper.getWritableDatabase();
+
+
+            database.update("Device", contentValues, "phone_number=?", new String[]{phoneNumber});
+
+            isSuccess = true;
+
+        } catch (SQLiteException s) {
+
+            isSuccess = false;
+
+            Toast.makeText(context, s.getMessage(), Toast.LENGTH_SHORT).show();
+
+        }
+
+        return isSuccess && isTimeUpdateSuccess;
+
+    }
+
+    private static boolean UpdateLastOffTime(Context context, String phoneNumber) {
 
         boolean isSuccess;
 
@@ -106,11 +154,8 @@ public class DatabaseOperation {
 
             ContentValues contentValues = new ContentValues();
 
-            if (code.contains("ON")) {
-                contentValues.put("status", 1);
-            } else if (code.contains("OFF")) {
-                contentValues.put("status", 0);
-            }
+
+            contentValues.put("last_off", Util.getTime());
 
 
             SQLiteOpenHelper databaseHelper = new DatabaseHelper(context);
@@ -132,6 +177,89 @@ public class DatabaseOperation {
 
         return isSuccess;
 
+    }
+
+    public static boolean insertHistory(Context context, String status, String device_name, String Time, String Date) {
+
+        boolean isSuccess;
+
+        try {
+
+            ContentValues contentValues = new ContentValues();
+
+
+            contentValues.put("device_name", device_name);
+
+            contentValues.put("status", status);
+
+            contentValues.put("time", Time);
+
+            contentValues.put("date", Date);
+
+
+            SQLiteOpenHelper databaseHelper = new DatabaseHelper(context);
+
+            SQLiteDatabase database = databaseHelper.getWritableDatabase();
+
+
+            database.insertOrThrow("History", null,
+                    contentValues
+            );
+
+            isSuccess = true;
+
+        } catch (SQLiteException s) {
+
+            isSuccess = false;
+
+            Toast.makeText(context, s.getMessage(), Toast.LENGTH_SHORT).show();
+
+        }
+
+        return isSuccess;
+    }
+
+    public static List<History> getHistory(Context context) {
+
+        Cursor cursor = null;
+
+        List<History> histories = new ArrayList<>();
+
+        try {
+            SQLiteOpenHelper openHelper = new DatabaseHelper(context);
+
+            SQLiteDatabase database = openHelper.getReadableDatabase();
+
+            cursor = database.query("History", new String[]{"device_name", "status", "time", "date"}, null, null, null, null, null);
+
+            if (cursor != null && cursor.getCount() != 0) {
+
+                while (cursor.moveToNext()) {
+
+                    histories.add(new History(
+                            cursor.getString(0),
+                            cursor.getString(1),
+                            cursor.getString(2),
+                            cursor.getString(3)
+                    ));
+                }
+
+            } else {
+
+                Toast.makeText(context, "No History found!", Toast.LENGTH_SHORT).show();
+            }
+        } catch (SQLiteException e) {
+
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+        } finally {
+
+            if (cursor != null)
+                cursor.close();
+        }
+
+
+        return histories;
     }
 
 

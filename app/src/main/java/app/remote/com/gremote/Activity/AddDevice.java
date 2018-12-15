@@ -1,5 +1,6 @@
 package app.remote.com.gremote.Activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -36,19 +37,24 @@ public class AddDevice extends AppCompatActivity {
 
                     boolean isSuccess = DatabaseOperation.saveDevice(AddDevice.this, new Device(deviceName.getText().toString(), 0,
                             Integer.parseInt(deviceOnCode.getText().toString()), Integer.parseInt(deviceOffCode.getText().toString()),
-                            devicePhone.getText().toString(), 0, HourToMilli(Integer.parseInt(deviceTimer.getText().toString())),
-                            Util.getLastTime()
+                          "+88" + devicePhone.getText().toString(), 0, HourToMilli(Integer.parseInt(deviceTimer.getText().toString())),
+                            "Unknown"
                     ));
 
                     if (isSuccess) {
+
                         Toast.makeText(AddDevice.this, "Device Save Success!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(AddDevice.this, Dashboard.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+
                     } else {
                         Toast.makeText(AddDevice.this, "Save not success!", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
         });
-
 
 
     }
@@ -83,7 +89,10 @@ public class AddDevice extends AppCompatActivity {
             if (editText.getText().length() == 0) {
 
                 count++;
-                Toast.makeText(this, editText.getTag().toString() + "can't be empty!", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(this, editText.getTag().toString() + " can't be empty!", Toast.LENGTH_SHORT).show();
+
+                break;
 
             }
 
@@ -91,5 +100,9 @@ public class AddDevice extends AppCompatActivity {
 
         return count == 0;
 
+    }
+
+    public void OnBack(View view) {
+        finish();
     }
 }

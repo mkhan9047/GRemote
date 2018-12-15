@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="app.remote.com.gremote">
 
-    <uses-permission android:name="android.permission.SEND_SMS"/>
-    <uses-permission android:name="android.permission.READ_SMS"/>
-    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
     <application
         android:allowBackup="true"
@@ -23,12 +23,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.AddDevice" android:theme="@style/AppTheme.NoActionBar"></activity>
-        <receiver android:name=".Receiver.SmsReceiver" >
+        <activity
+            android:name=".Activity.AddDevice"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <receiver android:name=".Receiver.SmsReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".Activity.HistoryActivity" android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

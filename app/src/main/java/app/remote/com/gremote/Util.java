@@ -1,8 +1,11 @@
 package app.remote.com.gremote;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.telephony.SmsManager;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -40,7 +43,7 @@ public class Util {
         return holder;
     }
 
-    public static String getLastTime() {
+    public static String getTime() {
         String am_pm = null;
 
         if (Calendar.getInstance().get(Calendar.AM_PM) == Calendar.AM) {
@@ -49,12 +52,20 @@ public class Util {
             am_pm = "PM";
         }
 
-        return Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + ":" + Calendar.getInstance().get(Calendar.MINUTE) + " " + am_pm;
+        return Calendar.getInstance().get(Calendar.HOUR) + ":" + Calendar.getInstance().get(Calendar.MINUTE) + " " + am_pm;
     }
 
-    public static void sendSms(String phoneNo, String message){
+    public static void sendSms(String phoneNo, String message) {
         SmsManager smsManager = SmsManager.getDefault();
         smsManager.sendTextMessage(phoneNo, null, message, null, null);
     }
+
+    public static String getDate() {
+        @SuppressLint("SimpleDateFormat")
+        DateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        Calendar cal = Calendar.getInstance();
+        return sdf.format(cal.getTime());
+    }
+
 
 }
