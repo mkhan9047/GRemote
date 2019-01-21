@@ -16,7 +16,8 @@ import app.remote.com.gremote.Util;
 public class AddDevice extends AppCompatActivity {
 
     TextView saveButton;
-    EditText deviceName, devicePhone, deviceOnCode, deviceOffCode, deviceTimer;
+    EditText deviceName, devicePhone, deviceOnCode, deviceOffCode;
+    EditText sensorOnCode, sensorOffCode, currentCheckCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +32,18 @@ public class AddDevice extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ValidateInput(new EditText[]{deviceName, deviceTimer, deviceTimer
+                if (ValidateInput(new EditText[]{deviceName
                         , deviceOffCode, deviceOnCode, devicePhone
                 })) {
 
-                    boolean isSuccess = DatabaseOperation.saveDevice(AddDevice.this, new Device(deviceName.getText().toString(), 0,
-                            Integer.parseInt(deviceOnCode.getText().toString()), Integer.parseInt(deviceOffCode.getText().toString()),
-                          "+88" + devicePhone.getText().toString(), 0, HourToMilli(Integer.parseInt(deviceTimer.getText().toString())),
-                            "Unknown"
+                    boolean isSuccess = DatabaseOperation.saveDevice(AddDevice.this, new Device(deviceName.getText().toString(),
+                            "+88" + devicePhone.getText().toString(),
+                            Integer.parseInt(deviceOnCode.getText().toString()),
+                            Integer.parseInt(deviceOffCode.getText().toString()),
+                            Integer.parseInt(sensorOnCode.getText().toString()),
+                            Integer.parseInt(sensorOffCode.getText().toString()),
+                            Integer.parseInt(currentCheckCode.getText().toString()),
+                            0, 0, "Unknown", 0, "Unknown"
                     ));
 
                     if (isSuccess) {
@@ -63,6 +68,12 @@ public class AddDevice extends AppCompatActivity {
     private void initView() {
         saveButton = findViewById(R.id.save_device);
 
+        sensorOffCode = findViewById(R.id.sensor_off_code);
+        sensorOffCode.setTag("Sensor Off Code");
+        sensorOnCode = findViewById(R.id.sensor_on_code);
+        sensorOnCode.setTag("Sensor On Code");
+        currentCheckCode = findViewById(R.id.current_code);
+        currentCheckCode.setTag("Current Check Code");
         deviceName = findViewById(R.id.device_name);
         deviceName.setTag("Device Name");
         devicePhone = findViewById(R.id.phone_number);
@@ -71,8 +82,8 @@ public class AddDevice extends AppCompatActivity {
         deviceOnCode.setTag("Device On Code");
         deviceOffCode = findViewById(R.id.off_code);
         deviceOffCode.setTag("Device Off Code");
-        deviceTimer = findViewById(R.id.timer);
-        deviceTimer.setTag("Device Timer");
+        // deviceTimer = findViewById(R.id.timer);
+        //deviceTimer.setTag("Device Timer");
     }
 
     private long HourToMilli(int hour) {

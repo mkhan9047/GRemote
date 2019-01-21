@@ -19,17 +19,19 @@ import app.remote.com.gremote.Util;
 public class DatabaseOperation {
 
     public static boolean saveDevice(Context context, Device device) {
-
         boolean isSuccess = false;
-
         ContentValues contentValues = new ContentValues();
         contentValues.put("device_name", device.getDeviceName());
         contentValues.put("phone_number", device.getPhoneNumber());
         contentValues.put("device_on", device.getOnCode());
         contentValues.put("device_off", device.getOffCode());
-        contentValues.put("timer", device.getTimerInMilli());
+        contentValues.put("sensor_on", device.getSensorOnCode());
+        contentValues.put("sensor_off", device.getSensorOffCode());
+        contentValues.put("current_check_code", device.getCurrentCheckCode());
         contentValues.put("motion_enable", device.getMotionStatus());
         contentValues.put("status", device.getDeviceStatus());
+        contentValues.put("current_status", device.getCurrentStatus());
+        contentValues.put("device_off_time", device.getDeviceOffTime());
         contentValues.put("last_off", device.getLastOffTime());
 
         try {
@@ -48,6 +50,7 @@ public class DatabaseOperation {
 
     }
 
+
     public static List<Device> getDevice(Context context) {
 
         Cursor cursor = null;
@@ -59,20 +62,39 @@ public class DatabaseOperation {
 
             SQLiteDatabase database = openHelper.getReadableDatabase();
 
-            cursor = database.query("Device", new String[]{"device_name", "phone_number", "device_on", "device_off", "timer", "motion_enable", "status", "last_off"}, null, null, null, null, null);
+            cursor = database.query("Device", new String[]{
+                    "device_name",
+                    "phone_number",
+                    "device_on",
+                    "device_off",
+                    "sensor_on",
+                    "sensor_off",
+                    "current_check_code",
+                    "motion_enable",
+                    "status",
+                    "current_status",
+                    "last_off",
+                    "device_off_time"
+            }, null, null, null, null, null);
 
             if (cursor != null && cursor.getCount() != 0) {
 
                 while (cursor.moveToNext()) {
 
                     devices.add(new Device(cursor.getString(0),
-                            cursor.getInt(6),
+                            cursor.getString(1),
                             cursor.getInt(2),
                             cursor.getInt(3),
-                            cursor.getString(1),
+                            cursor.getInt(4),
                             cursor.getInt(5),
-                            cursor.getLong(4),
-                            cursor.getString(7)
+                            cursor.getInt(6),
+                            cursor.getInt(7),
+                            cursor.getInt(8),
+                            cursor.getString(11),
+                            cursor.getInt(9),
+                            cursor.getString(10)
+
+
                     ));
                 }
 
@@ -103,7 +125,7 @@ public class DatabaseOperation {
 
             ContentValues contentValues = new ContentValues();
 
-            if (code.contains("ON")) {
+            if (code.equals("ON")) {
 
                 contentValues.put("status", 1);
 
@@ -113,15 +135,34 @@ public class DatabaseOperation {
 
                 isTimeUpdateSuccess = true;
 
-            } else if (code.contains("OFF")) {
+            } else if (code.equals("OFF")) {
 
                 contentValues.put("status", 0);
-
                 /*setting history table */
-
                 insertHistory(context, "OFF", device_name, Util.getTime(), Util.getDate());
-
                 isTimeUpdateSuccess = UpdateLastOffTime(context, phoneNumber);
+
+            } else if (code.equals("MOTION_ON")) {
+
+                contentValues.put("motion_enable", 1);
+                isTimeUpdateSuccess = true;
+
+            } else if (code.equals("MOTION_OFF")) {
+
+                contentValues.put("motion_enable", 0);
+                isTimeUpdateSuccess = true;
+
+            }else if(code.equals("CURRENT_ON")){
+
+                contentValues.put("current_status", 1);
+                isTimeUpdateSuccess = true;
+
+            }else if(code.equals("CURRENT_OFF")){
+
+                contentValues.put("current_status", 0);
+                isTimeUpdateSuccess = true;
+
+
             }
 
 
@@ -179,7 +220,8 @@ public class DatabaseOperation {
 
     }
 
-    public static boolean insertHistory(Context context, String status, String device_name, String Time, String Date) {
+
+    private static void insertHistory(Context context, String status, String device_name, String Time, String Date) {
 
         boolean isSuccess;
 
@@ -216,7 +258,6 @@ public class DatabaseOperation {
 
         }
 
-        return isSuccess;
     }
 
     public static List<History> getHistory(Context context) {

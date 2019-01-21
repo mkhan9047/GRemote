@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 public class Util {
 
+
+
     public static HashMap<String, Integer> getTimeFromMillisecond(long millis) {
 
         /*make a placeholder hash map object*/
@@ -65,6 +67,23 @@ public class Util {
         DateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         Calendar cal = Calendar.getInstance();
         return sdf.format(cal.getTime());
+    }
+
+    public static long getMilliFromTwoTimes(int hourFirst, int minFirst, int hourSecond, int minSeconds) {
+
+        long first = (((hourFirst * 60) + minFirst) * 60) * 1000;
+
+        long second = (((hourSecond * 60) + minSeconds) * 60) * 1000;
+
+
+        long got = second - first;
+
+        if (got > 0) {
+            return got;
+        } else {
+            return 0;
+        }
+
     }
 
 

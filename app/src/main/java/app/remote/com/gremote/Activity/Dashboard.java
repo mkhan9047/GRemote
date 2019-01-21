@@ -1,9 +1,13 @@
 package app.remote.com.gremote.Activity;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,6 +30,7 @@ import app.remote.com.gremote.Adapter.DeviceRecyclerAdapter;
 import app.remote.com.gremote.Database.DatabaseOperation;
 import app.remote.com.gremote.Model.History;
 import app.remote.com.gremote.R;
+import app.remote.com.gremote.Util;
 
 public class Dashboard extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -49,6 +54,15 @@ public class Dashboard extends AppCompatActivity
 
         setSupportActionBar(toolbar);
 
+        int PERMISSION_ALL = 1;
+        String[] PERMISSIONS = {
+                Manifest.permission.SEND_SMS,
+                Manifest.permission.READ_SMS
+        };
+
+        if(!hasPermissions(this, PERMISSIONS)){
+            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -79,9 +93,18 @@ public class Dashboard extends AppCompatActivity
 
         deviceRecyler.setAdapter(adapter);
 
+
+
         Toast.makeText(this, String.valueOf(DatabaseOperation.getDevice(this).size()), Toast.LENGTH_SHORT).show();
 
+
+
     }
+
+
+
+
+
 
     @Override
     public void onBackPressed() {
@@ -97,6 +120,17 @@ public class Dashboard extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         navigationView.setCheckedItem(R.id.nav_dashboard);
+    }
+
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

@@ -14,6 +14,7 @@ import app.remote.com.gremote.Activity.Dashboard;
 import app.remote.com.gremote.Adapter.DeviceRecyclerAdapter;
 import app.remote.com.gremote.Database.DatabaseOperation;
 import app.remote.com.gremote.Model.Device;
+import app.remote.com.gremote.Util;
 
 public class SmsReceiver extends BroadcastReceiver {
     @Override

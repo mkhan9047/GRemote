@@ -19,8 +19,8 @@ import app.remote.com.gremote.R;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryHolder> {
 
-    List<History> historyList;
-    Context context;
+    private List<History> historyList;
+    private Context context;
 
     public HistoryAdapter(List<History> historyList, Context context) {
         this.historyList = historyList;

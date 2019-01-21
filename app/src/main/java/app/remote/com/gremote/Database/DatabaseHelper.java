@@ -32,15 +32,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 "device_off INTEGER, \n" +
 
-                "timer INTEGER, \n" +
+                "sensor_on INTEGER, \n" +
 
-                "last_timer INTEGER, \n" +
+                "sensor_off INTEGER, \n" +
+
+                "current_check_code INTEGER, \n" +
 
                 "motion_enable INTEGER, \n" +
 
                 "status INTEGER, \n" +
 
-                "last_off TEXT \n" +
+                "current_status INTEGER, \n" +
+
+                "last_off TEXT, \n" +
+
+                "device_off_time TEXT \n" +
 
                 ");";
 
