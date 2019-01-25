@@ -125,7 +125,7 @@ public class DatabaseOperation {
 
             ContentValues contentValues = new ContentValues();
 
-            if (code.equals("ON")) {
+            if (code.equals("DEVICE_ON_SUCCESSFUL")) {
 
                 contentValues.put("status", 1);
 
@@ -135,19 +135,19 @@ public class DatabaseOperation {
 
                 isTimeUpdateSuccess = true;
 
-            } else if (code.equals("OFF")) {
+            } else if (code.equals("DEVICE_OFF_SUCCESSFUL")) {
 
                 contentValues.put("status", 0);
                 /*setting history table */
                 insertHistory(context, "OFF", device_name, Util.getTime(), Util.getDate());
                 isTimeUpdateSuccess = UpdateLastOffTime(context, phoneNumber);
 
-            } else if (code.equals("MOTION_ON")) {
+            } else if (code.equals("SENSOR_ON")) {
 
                 contentValues.put("motion_enable", 1);
                 isTimeUpdateSuccess = true;
 
-            } else if (code.equals("MOTION_OFF")) {
+            } else if (code.equals("SENSOR_OFF")) {
 
                 contentValues.put("motion_enable", 0);
                 isTimeUpdateSuccess = true;
@@ -219,6 +219,41 @@ public class DatabaseOperation {
         return isSuccess;
 
     }
+
+    public static boolean UpdateDeviceOffTime(Context context, String time, String phoneNumber) {
+
+        boolean isSuccess;
+
+        try {
+
+            ContentValues contentValues = new ContentValues();
+
+
+            contentValues.put("device_off_time", time);
+
+
+            SQLiteOpenHelper databaseHelper = new DatabaseHelper(context);
+
+            SQLiteDatabase database = databaseHelper.getWritableDatabase();
+
+
+            database.update("Device", contentValues, "phone_number=?", new String[]{phoneNumber});
+
+            isSuccess = true;
+
+        } catch (SQLiteException s) {
+
+            isSuccess = false;
+
+            Toast.makeText(context, s.getMessage(), Toast.LENGTH_SHORT).show();
+
+        }
+
+        return isSuccess;
+
+    }
+
+
 
 
     private static void insertHistory(Context context, String status, String device_name, String Time, String Date) {

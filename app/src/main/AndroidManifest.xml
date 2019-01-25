@@ -28,11 +28,18 @@
             android:name=".Activity.AddDevice"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <receiver android:name=".Receiver.SmsReceiver">
-        <intent-filter>
-            <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+        <receiver android:name=".Receiver.SmsReceiver" android:permission="android.permission.BROADCAST_SMS" android:exported="true">
+        <intent-filter android:priority="5000">
+            <action  android:name="android.provider.Telephony.SMS_RECEIVED" />
         </intent-filter>
     </receiver>
+
+        <receiver
+            android:name=".Receiver.MyReceiver"
+            android:enabled="true"
+            android:exported="true"
+            />
+
 
         <activity android:name=".Activity.HistoryActivity" android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>

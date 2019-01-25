@@ -1,8 +1,12 @@
 package app.remote.com.gremote.Adapter;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -23,15 +27,22 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.io.Serializable;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
 
 import app.remote.com.gremote.CustomClass.CustomSwitchCompact;
 import app.remote.com.gremote.Database.DatabaseOperation;
 import app.remote.com.gremote.Model.Device;
 import app.remote.com.gremote.R;
+import app.remote.com.gremote.Receiver.MyReceiver;
 import app.remote.com.gremote.Util;
+
+import static android.content.Context.ALARM_SERVICE;
 
 public class DeviceRecyclerAdapter extends RecyclerView.Adapter<DeviceRecyclerAdapter.DeviceHolder> {
 
@@ -67,35 +78,40 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter<DeviceRecyclerAd
         final DeviceHolder bn = holder;
 
         if (deviceList.get(position).getCurrentStatus() == 1) {
-            holder.iv_current_status.setImageResource(R.drawable.ic_has_ele);
+            holder.currentButton.setImageResource(R.drawable.ic_has_ele);
         } else if (deviceList.get(position).getCurrentStatus() == 0) {
-            holder.iv_current_status.setImageResource(R.drawable.ic_no_ele);
+            holder.currentButton.setImageResource(R.drawable.ic_no_ele);
         }
 
         if (deviceList.get(position).getMotionStatus() == 1) {
 
-            holder.motionSwitch.setChecked(true);
+            holder.sensorOnButton.setImageResource(R.drawable.ic_button_on);
+            holder.sensorOffButton.setImageResource(R.drawable.ic_button_none);
 
         } else if (deviceList.get(position).getMotionStatus() == 0) {
-
-            holder.motionSwitch.setChecked(false);
+            holder.sensorOffButton.setImageResource(R.drawable.ic_button_off);
+            holder.sensorOnButton.setImageResource(R.drawable.ic_button_none);
         }
 
-
-
+        if (!(deviceList.get(position).getDeviceOffTime().contains("Unknown"))) {
+            holder.timer.setText(deviceList.get(position).getDeviceOffTime());
+        } else {
+            holder.timer.setText("Set Timer");
+        }
 
         if (deviceList.get(position).getDeviceStatus() == 1) {
-            holder.status.setText("Status: " + "On");
+
             // holder.timerSwitch.setChecked(true);
 /*            holder.onButton.setImageResource(R.drawable.on_after);
             holder.offButton.setImageResource(R.drawable.off_before);*/
-            holder.deviceSwitch.setTag("TAG");
-            holder.deviceSwitch.setChecked(true);
+
+            holder.machineOnButton.setImageResource(R.drawable.ic_button_on);
+            holder.machineOffButton.setImageResource(R.drawable.ic_button_none);
 
         } else if (deviceList.get(position).getDeviceStatus() == 0) {
 
-            holder.deviceSwitch.setChecked(false);
-            holder.status.setText("Status: " + "Off");
+            holder.machineOffButton.setImageResource(R.drawable.ic_button_off);
+            holder.machineOnButton.setImageResource(R.drawable.ic_button_none);
             //holder.timerSwitch.setChecked(false);
 /*            holder.onButton.setImageResource(R.drawable.on_before);
             holder.offButton.setImageResource(R.drawable.off_after);
@@ -115,12 +131,9 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter<DeviceRecyclerAd
 
     class DeviceHolder extends RecyclerView.ViewHolder {
 
-        TextView deviceName, status, lastOffTime;
-        // ImageButton onButton, offButton;
-        Button checkCurrent;
-        Switch deviceSwitch;
-        CustomSwitchCompact motionSwitch;
-        ImageView iv_current_status;
+        TextView deviceName, timer, lastOffTime;
+        ImageButton machineOnButton, machineOffButton, sensorOnButton, sensorOffButton;
+        ImageButton timerButton, currentButton;
 
         @SuppressLint("ClickableViewAccessibility")
         public DeviceHolder(View itemView) {
@@ -128,15 +141,72 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter<DeviceRecyclerAd
 
             deviceName = itemView.findViewById(R.id.device_name);
             lastOffTime = itemView.findViewById(R.id.last_off_time);
-            status = itemView.findViewById(R.id.status);
-            // onButton = itemView.findViewById(R.id.on_button);
-            // offButton = itemView.findViewById(R.id.off_button);
-            checkCurrent = itemView.findViewById(R.id.btn_check_current);
-            deviceSwitch = itemView.findViewById(R.id.device_switch);
-            motionSwitch =  itemView.findViewById(R.id.motion_switch);
-            iv_current_status = itemView.findViewById(R.id.iv_current_status);
+            machineOffButton = itemView.findViewById(R.id.btn_off_machine);
+            machineOnButton = itemView.findViewById(R.id.btn_on_machine);
+            sensorOffButton = itemView.findViewById(R.id.btn_off_sensor);
+            sensorOnButton = itemView.findViewById(R.id.btn_on_sensor);
+            timerButton = itemView.findViewById(R.id.btn_set_time);
+            currentButton = itemView.findViewById(R.id.btn_current_status);
 
-            checkCurrent.setOnClickListener(new View.OnClickListener() {
+            timer = itemView.findViewById(R.id.tv_timer);
+
+
+            machineOnButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (deviceList.get(getAdapterPosition()).getDeviceStatus() == 1) {
+                        Toast.makeText(context, deviceList.get(getAdapterPosition()).getDeviceName() + " Is ON! Can't process the request!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // deviceSwitch.setChecked(false);
+                        Toast.makeText(context, "Machine On Request is sent to " + deviceList.get(getAdapterPosition()).getDeviceName(), Toast.LENGTH_SHORT).show();
+                        Util.sendSms(deviceList.get(getAdapterPosition()).getPhoneNumber(), String.valueOf(deviceList.get(getAdapterPosition()).getOnCode()));
+
+                    }
+                }
+
+            });
+
+
+            machineOffButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (deviceList.get(getAdapterPosition()).getDeviceStatus() == 0) {
+                        Toast.makeText(context, deviceList.get(getAdapterPosition()).getDeviceName() + " Is OFF! Can't process the request!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // deviceSwitch.setChecked(false);
+                        Toast.makeText(context, "Machine OFF Request is sent to " + deviceList.get(getAdapterPosition()).getDeviceName(), Toast.LENGTH_SHORT).show();
+                        Util.sendSms(deviceList.get(getAdapterPosition()).getPhoneNumber(), String.valueOf(deviceList.get(getAdapterPosition()).getOffCode()));
+
+                    }
+                }
+            });
+
+            sensorOnButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (deviceList.get(getAdapterPosition()).getMotionStatus() == 1) {
+                        Toast.makeText(context, deviceList.get(getAdapterPosition()).getDeviceName() + "Sensor Is ON! Can't process the request!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Sensor On Request is sent to " + deviceList.get(getAdapterPosition()).getDeviceName(), Toast.LENGTH_SHORT).show();
+                        Util.sendSms(deviceList.get(getAdapterPosition()).getPhoneNumber(), String.valueOf(deviceList.get(getAdapterPosition()).getSensorOnCode()));
+                    }
+                }
+            });
+
+            sensorOffButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (deviceList.get(getAdapterPosition()).getMotionStatus() == 0) {
+                        Toast.makeText(context, deviceList.get(getAdapterPosition()).getDeviceName() + "Sensor Is OFF! Can't process the request!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Sensor On Request is sent to " + deviceList.get(getAdapterPosition()).getDeviceName(), Toast.LENGTH_SHORT).show();
+                        Util.sendSms(deviceList.get(getAdapterPosition()).getPhoneNumber(), String.valueOf(deviceList.get(getAdapterPosition()).getSensorOffCode()));
+                    }
+                }
+            });
+
+
+            currentButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(context, "Current Check Request is sent to " + deviceList.get(getAdapterPosition()).getDeviceName(), Toast.LENGTH_SHORT).show();
@@ -144,65 +214,66 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter<DeviceRecyclerAd
                 }
             });
 
-            motionSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            timerButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if (b) {
-                        if (deviceList.get(getAdapterPosition()).getMotionStatus() == 1) {
-                            Toast.makeText(context, deviceList.get(getAdapterPosition()).getDeviceName() + "Sensor Is ON! Can't process the request!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            // deviceSwitch.setChecked(false);*/
-                            Toast.makeText(context, "Sensor On Request is sent to " + deviceList.get(getAdapterPosition()).getDeviceName(), Toast.LENGTH_SHORT).show();
-                            Util.sendSms(deviceList.get(getAdapterPosition()).getPhoneNumber(), String.valueOf(deviceList.get(getAdapterPosition()).getSensorOnCode()));
-                        }
+                public void onClick(View view) {
+                    Calendar mcurrentTime = Calendar.getInstance();
+                    int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                    int minute = mcurrentTime.get(Calendar.MINUTE);
+                    TimePickerDialog mTimePicker;
+                    mTimePicker = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
+                        @SuppressLint("SimpleDateFormat")
+                        @Override
+                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                            Calendar cal = Calendar.getInstance();
+                            cal.set(Calendar.HOUR_OF_DAY, selectedHour);
+                            cal.set(Calendar.MINUTE, selectedMinute);
+                            Format formatter;
+                            formatter = new SimpleDateFormat("h:mm a");
+                            if(timer.getText().toString().contains("Set Timer")){
+                                if (cal.getTimeInMillis() > System.currentTimeMillis()) {
+                                    boolean isSuccess = DatabaseOperation.UpdateDeviceOffTime(context, formatter.format(cal.getTime()), deviceList.get(getAdapterPosition()).getPhoneNumber());
+                                    if (isSuccess) {
+                                        setAlarmTime(cal.getTimeInMillis());
+                                        deviceList = DatabaseOperation.getDevice(context);
+                                        notifyDataSetChanged();
+                                    } else {
+                                        Toast.makeText(context, "Timer set not success!", Toast.LENGTH_SHORT).show();
+                                    }
+                                } else {
+                                    Toast.makeText(context, "You can't set time less than current time!", Toast.LENGTH_SHORT).show();
+                                }
+                            }else{
+                                Toast.makeText(context, "Timer Already Set!", Toast.LENGTH_SHORT).show();
+                            }
 
-                    } else {
-
-                        Toast.makeText(context, "Sensor Off Request is sent to " + deviceList.get(getAdapterPosition()).getDeviceName(), Toast.LENGTH_SHORT).show();
-                        Util.sendSms(deviceList.get(getAdapterPosition()).getPhoneNumber(), String.valueOf(deviceList.get(getAdapterPosition()).getSensorOffCode()));
-
-
-                    }
-                }
-            });
-
-
-
-
-            deviceSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-
-                    if (deviceSwitch.getTag() != null) {
-                        deviceSwitch.setTag(null);
-                        return;
-                    }
-
-                    if (b) {
-                        if (deviceList.get(getAdapterPosition()).getDeviceStatus() == 1) {
-                            Toast.makeText(context, deviceList.get(getAdapterPosition()).getDeviceName() + " Is ON! Can't process the request!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            // deviceSwitch.setChecked(false);
-                            Toast.makeText(context, "Machine On Request is sent to " + deviceList.get(getAdapterPosition()).getDeviceName(), Toast.LENGTH_SHORT).show();
-                            Util.sendSms(deviceList.get(getAdapterPosition()).getPhoneNumber(), String.valueOf(deviceList.get(getAdapterPosition()).getOnCode()));
 
                         }
-                    } else {
-                        //deviceSwitch.setChecked(true);
-                        Toast.makeText(context, "Machine Off Request is sent to " + deviceList.get(getAdapterPosition()).getDeviceName(), Toast.LENGTH_SHORT).show();
-                        Util.sendSms(deviceList.get(getAdapterPosition()).getPhoneNumber(), String.valueOf(deviceList.get(getAdapterPosition()).getOffCode()));
-                    }
+                    }, hour, minute, false);//Yes 24 hour time
+                    mTimePicker.setTitle("Select Time");
+                    if(context != null)
+                    mTimePicker.show();
                 }
             });
 
-            deviceSwitch.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    deviceSwitch.setTag(null);
-                    return false;
-                }
-            });
 
+        }
+
+        private void setAlarmTime(long afterMilliseconds) {
+            AlarmManager manager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+            Intent intent = new Intent(context, MyReceiver.class);
+            intent.putExtra("phone",  deviceList.get(getAdapterPosition()).getPhoneNumber());
+            intent.putExtra("off_code",  deviceList.get(getAdapterPosition()).getOffCode());
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, (int)System.currentTimeMillis(), intent, 0);
+            if (manager != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    manager.setExact(AlarmManager.RTC_WAKEUP, afterMilliseconds, pendingIntent);
+                }else {
+                    manager.set(AlarmManager.RTC_WAKEUP, afterMilliseconds, pendingIntent);
+                }
+            }
+            // Toast.makeText(this, "Alarm Set Success!", Toast.LENGTH_SHORT).show();
         }
     }
 }

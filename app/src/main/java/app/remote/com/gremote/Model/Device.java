@@ -1,6 +1,8 @@
 package app.remote.com.gremote.Model;
 
-public class Device {
+import java.io.Serializable;
+
+public class Device implements Serializable{
 
     private String deviceName;
     private String phoneNumber;

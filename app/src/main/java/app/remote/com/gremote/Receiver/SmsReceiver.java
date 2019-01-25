@@ -19,6 +19,9 @@ import app.remote.com.gremote.Util;
 public class SmsReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+
+
+
         List<Device> devices;
         Bundle b = intent.getExtras();
 
@@ -51,7 +54,7 @@ public class SmsReceiver extends BroadcastReceiver {
 
                                 devices = DatabaseOperation.getDevice(context);
 
-                                DeviceRecyclerAdapter adapter = new DeviceRecyclerAdapter(devices, context);
+                                DeviceRecyclerAdapter adapter = new DeviceRecyclerAdapter(devices, (context));
 
                                 Dashboard.deviceRecyler.setAdapter(adapter);
 
