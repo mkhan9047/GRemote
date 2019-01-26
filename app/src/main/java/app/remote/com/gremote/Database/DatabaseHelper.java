@@ -28,15 +28,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 "phone_number TEXT UNIQUE,\n" +
 
-                "device_on INTEGER, \n" +
+                "device_on TEXT, \n" +
 
-                "device_off INTEGER, \n" +
+                "device_off TEXT, \n" +
 
-                "sensor_on INTEGER, \n" +
+                "sensor_on TEXT, \n" +
 
-                "sensor_off INTEGER, \n" +
+                "sensor_off TEXT, \n" +
 
-                "current_check_code INTEGER, \n" +
+                "current_check_code TEXT, \n" +
 
                 "motion_enable INTEGER, \n" +
 

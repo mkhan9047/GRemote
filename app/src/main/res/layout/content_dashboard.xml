@@ -14,7 +14,8 @@
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:id="@+id/device_recyler"
-        android:layout_height="wrap_content">
+        android:layout_above="@id/footer"
+        android:layout_height="match_parent">
 
     </android.support.v7.widget.RecyclerView>
 
@@ -26,5 +27,16 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="Add Device" />
+
+
+    <ImageView
+        android:layout_width="180dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_footer"
+        android:scaleType="fitCenter"
+        android:id="@+id/footer"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        />
 
 </RelativeLayout>

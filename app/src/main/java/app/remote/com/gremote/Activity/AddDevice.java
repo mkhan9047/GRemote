@@ -38,11 +38,11 @@ public class AddDevice extends AppCompatActivity {
 
                     boolean isSuccess = DatabaseOperation.saveDevice(AddDevice.this, new Device(deviceName.getText().toString(),
                             "+88" + devicePhone.getText().toString(),
-                            Integer.parseInt(deviceOnCode.getText().toString()),
-                            Integer.parseInt(deviceOffCode.getText().toString()),
-                            Integer.parseInt(sensorOnCode.getText().toString()),
-                            Integer.parseInt(sensorOffCode.getText().toString()),
-                            Integer.parseInt(currentCheckCode.getText().toString()),
+                        deviceOnCode.getText().toString(),
+                           deviceOffCode.getText().toString(),
+                          sensorOnCode.getText().toString(),
+                           sensorOffCode.getText().toString(),
+                       currentCheckCode.getText().toString(),
                             0, 0, "Unknown", 0, "Unknown"
                     ));
 

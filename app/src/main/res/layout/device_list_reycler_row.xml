@@ -16,7 +16,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#4B4B4B"
+            android:background="#704B4B4B"
             android:orientation="vertical">
 
             <LinearLayout
@@ -28,11 +28,12 @@
                     android:id="@+id/device_name"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:background="#38008E"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:paddingStart="8dp"
                     android:text="Motor 1"
-                    android:textColor="#4CCFA5"
+                    android:textColor="@color/color_white"
                     android:textSize="17sp" />
 
 
@@ -40,7 +41,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="120dp"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal">
 
@@ -59,28 +60,66 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="55dp"
+                        android:layout_height="90dp"
                         android:gravity="center"
                         android:orientation="horizontal">
 
-                        <ImageButton
-                            android:id="@+id/btn_on_machine"
-                            android:layout_width="55dp"
-                            android:layout_height="match_parent"
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:orientation="vertical"
                             android:layout_marginEnd="8dp"
-                            android:background="@android:color/transparent"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/ic_button_on" />
+                            android:layout_height="wrap_content">
 
-                        <ImageButton
-                            android:id="@+id/btn_off_machine"
-                            android:layout_width="55dp"
-                            android:layout_height="match_parent"
+                            <ImageButton
+                                android:id="@+id/btn_on_machine"
+                                android:layout_width="65dp"
+                                android:layout_height="65dp"
+                                android:background="@android:color/transparent"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_button_on" />
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:text="ON"
+                                android:textSize="16sp"
+                                android:textColor="@color/color_white"
+                                android:layout_marginTop="5dp"
+                                />
+
+
+                        </LinearLayout>
+
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:orientation="vertical"
                             android:layout_marginStart="8dp"
-                            android:src="@drawable/ic_button_off"
-                            android:scaleType="fitCenter"
-                            android:background="@android:color/transparent"
-                            />
+                            android:layout_height="wrap_content">
+
+                            <ImageButton
+                                android:id="@+id/btn_off_machine"
+                                android:layout_width="65dp"
+                                android:layout_height="65dp"
+                                android:src="@drawable/ic_button_off"
+                                android:scaleType="fitCenter"
+                                android:background="@android:color/transparent"
+                                />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:text="OFF"
+                                android:textSize="16sp"
+                                android:textColor="@color/color_white"
+                                android:layout_marginTop="5dp"
+                                />
+                        </LinearLayout>
+
 
 
                     </LinearLayout>
@@ -155,32 +194,70 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="55dp"
+                            android:layout_height="90dp"
                             android:gravity="center"
                             android:orientation="horizontal">
 
-                            <ImageButton
-                                android:id="@+id/btn_on_sensor"
-                                android:layout_width="55dp"
-                                android:layout_height="match_parent"
-                                android:background="@android:color/transparent"
-                                android:scaleType="fitCenter"
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:orientation="vertical"
                                 android:layout_marginEnd="8dp"
-                                android:src="@drawable/ic_button_on"
-                                />
+                                android:layout_height="wrap_content">
 
-                            <ImageButton
-                                android:id="@+id/btn_off_sensor"
-                                android:layout_width="55dp"
-                                android:layout_height="match_parent"
+                                <ImageButton
+                                    android:id="@+id/btn_on_sensor"
+                                    android:layout_width="65dp"
+                                    android:layout_height="65dp"
+                                    android:background="@android:color/transparent"
+                                    android:scaleType="fitCenter"
+                                    android:src="@drawable/ic_button_on" />
+
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:text="ON"
+                                    android:textSize="16sp"
+                                    android:textColor="@color/color_white"
+                                    android:layout_marginTop="5dp"
+                                    />
+
+
+                            </LinearLayout>
+
+
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:orientation="vertical"
                                 android:layout_marginStart="8dp"
-                                android:src="@drawable/ic_button_off"
-                                android:scaleType="fitCenter"
-                                android:background="@android:color/transparent"
-                                />
+                                android:layout_height="wrap_content">
+
+                                <ImageButton
+                                    android:id="@+id/btn_off_sensor"
+                                    android:layout_width="65dp"
+                                    android:layout_height="65dp"
+                                    android:src="@drawable/ic_button_off"
+                                    android:scaleType="fitCenter"
+                                    android:background="@android:color/transparent"
+                                    />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:text="OFF"
+                                    android:textSize="16sp"
+                                    android:textColor="@color/color_white"
+                                    android:layout_marginTop="5dp"
+                                    />
+                            </LinearLayout>
+
 
 
                         </LinearLayout>
+
 
                         <TextView
                             android:layout_width="wrap_content"

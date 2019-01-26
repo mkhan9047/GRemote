@@ -6,11 +6,11 @@ public class Device implements Serializable{
 
     private String deviceName;
     private String phoneNumber;
-    private int onCode;
-    private int offCode;
-    private int sensorOnCode;
-    private int sensorOffCode;
-    private int currentCheckCode;
+    private String onCode;
+    private String offCode;
+    private String sensorOnCode;
+    private String sensorOffCode;
+    private String currentCheckCode;
     private int motionStatus;
     private int deviceStatus;
     private int currentStatus;
@@ -19,7 +19,7 @@ public class Device implements Serializable{
 
 
 
-    public Device(String deviceName, String phoneNumber, int onCode, int offCode, int sensorOnCode, int sensorOffCode, int currentCheckCode,  int motionStatus, int deviceStatus, String deviceOffTime, int currentStatus, String lastOffTime) {
+    public Device(String deviceName, String phoneNumber, String onCode, String offCode, String sensorOnCode, String sensorOffCode, String currentCheckCode,  int motionStatus, int deviceStatus, String deviceOffTime, int currentStatus, String lastOffTime) {
         this.deviceOffTime = deviceOffTime;
         this.deviceName = deviceName;
         this.phoneNumber = phoneNumber;
@@ -39,15 +39,15 @@ public class Device implements Serializable{
         return deviceOffTime;
     }
 
-    public int getSensorOnCode() {
+    public String getSensorOnCode() {
         return sensorOnCode;
     }
 
-    public int getSensorOffCode() {
+    public String getSensorOffCode() {
         return sensorOffCode;
     }
 
-    public int getCurrentCheckCode() {
+    public String getCurrentCheckCode() {
         return currentCheckCode;
     }
 
@@ -63,11 +63,11 @@ public class Device implements Serializable{
         return deviceStatus;
     }
 
-    public int getOnCode() {
+    public String getOnCode() {
         return onCode;
     }
 
-    public int getOffCode() {
+    public String getOffCode() {
         return offCode;
     }
 
