@@ -1,6 +1,7 @@
 package app.remote.com.gremote.Adapter;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
@@ -35,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 
+import app.remote.com.gremote.Activity.Dashboard;
 import app.remote.com.gremote.CustomClass.CustomSwitchCompact;
 import app.remote.com.gremote.Database.DatabaseOperation;
 import app.remote.com.gremote.Model.Device;
@@ -231,29 +233,36 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter<DeviceRecyclerAd
                             cal.set(Calendar.MINUTE, selectedMinute);
                             Format formatter;
                             formatter = new SimpleDateFormat("h:mm a");
-                            if(timer.getText().toString().contains("Set Timer")){
-                                if (cal.getTimeInMillis() > System.currentTimeMillis()) {
-                                    boolean isSuccess = DatabaseOperation.UpdateDeviceOffTime(context, formatter.format(cal.getTime()), deviceList.get(getAdapterPosition()).getPhoneNumber());
-                                    if (isSuccess) {
-                                        setAlarmTime(cal.getTimeInMillis());
-                                        deviceList = DatabaseOperation.getDevice(context);
-                                        notifyDataSetChanged();
+
+                            if (deviceList.get(getAdapterPosition()).getDeviceStatus() == 1) {
+                                if (timer.getText().toString().contains("Set Timer")) {
+                                    if (cal.getTimeInMillis() > System.currentTimeMillis()) {
+                                        boolean isSuccess = DatabaseOperation.UpdateDeviceOffTime(context, formatter.format(cal.getTime()), deviceList.get(getAdapterPosition()).getPhoneNumber());
+                                        if (isSuccess) {
+                                            setAlarmTime(cal.getTimeInMillis());
+                                            deviceList = DatabaseOperation.getDevice(context);
+                                            notifyDataSetChanged();
+                                        } else {
+                                            Toast.makeText(context, "Timer set not success!", Toast.LENGTH_SHORT).show();
+                                        }
                                     } else {
-                                        Toast.makeText(context, "Timer set not success!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "You can't set time less than current time!", Toast.LENGTH_SHORT).show();
                                     }
                                 } else {
-                                    Toast.makeText(context, "You can't set time less than current time!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "Timer Already Set!", Toast.LENGTH_SHORT).show();
                                 }
-                            }else{
-                                Toast.makeText(context, "Timer Already Set!", Toast.LENGTH_SHORT).show();
+
+                            } else if (deviceList.get(getAdapterPosition()).getDeviceStatus() == 0) {
+                                Toast.makeText(context, "Device is off, timer can't be set now", Toast.LENGTH_SHORT).show();
+
                             }
 
 
                         }
                     }, hour, minute, false);//Yes 24 hour time
                     mTimePicker.setTitle("Select Time");
-                    if(context != null)
-                    mTimePicker.show();
+                    if (context != null)
+                        mTimePicker.show();
                 }
             });
 
@@ -263,17 +272,20 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter<DeviceRecyclerAd
         private void setAlarmTime(long afterMilliseconds) {
             AlarmManager manager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
             Intent intent = new Intent(context, MyReceiver.class);
-            intent.putExtra("phone",  deviceList.get(getAdapterPosition()).getPhoneNumber());
-            intent.putExtra("off_code",  deviceList.get(getAdapterPosition()).getOffCode());
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, (int)System.currentTimeMillis(), intent, 0);
+            intent.putExtra("phone", deviceList.get(getAdapterPosition()).getPhoneNumber());
+            intent.putExtra("off_code", deviceList.get(getAdapterPosition()).getOffCode());
+            int pendingIntentNumber = (int) System.currentTimeMillis();
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, pendingIntentNumber, intent, 0);
             if (manager != null) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     manager.setExact(AlarmManager.RTC_WAKEUP, afterMilliseconds, pendingIntent);
-                }else {
+                } else {
                     manager.set(AlarmManager.RTC_WAKEUP, afterMilliseconds, pendingIntent);
                 }
             }
             // Toast.makeText(this, "Alarm Set Success!", Toast.LENGTH_SHORT).show();
         }
+
+
     }
 }

@@ -16,10 +16,12 @@ public class Device implements Serializable{
     private int currentStatus;
     private String deviceOffTime;
     private String lastOffTime;
+    private int intent_number;
 
 
 
-    public Device(String deviceName, String phoneNumber, String onCode, String offCode, String sensorOnCode, String sensorOffCode, String currentCheckCode,  int motionStatus, int deviceStatus, String deviceOffTime, int currentStatus, String lastOffTime) {
+    public Device(int intent_number, String deviceName, String phoneNumber, String onCode, String offCode, String sensorOnCode, String sensorOffCode, String currentCheckCode,  int motionStatus, int deviceStatus, String deviceOffTime, int currentStatus, String lastOffTime) {
+        this.intent_number = intent_number;
         this.deviceOffTime = deviceOffTime;
         this.deviceName = deviceName;
         this.phoneNumber = phoneNumber;
@@ -69,6 +71,10 @@ public class Device implements Serializable{
 
     public String getOffCode() {
         return offCode;
+    }
+
+    public int getIntent_number() {
+        return intent_number;
     }
 
     public String getPhoneNumber() {

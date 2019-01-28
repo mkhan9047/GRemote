@@ -74,14 +74,16 @@ public class DatabaseOperation {
                     "status",
                     "current_status",
                     "last_off",
-                    "device_off_time"
+                    "device_off_time",
+                    "intent_number"
             }, null, null, null, null, null);
 
             if (cursor != null && cursor.getCount() != 0) {
 
                 while (cursor.moveToNext()) {
 
-                    devices.add(new Device(cursor.getString(0),
+                    devices.add(new Device(cursor.getInt(12),
+                            cursor.getString(0),
                             cursor.getString(1),
                             cursor.getString(2),
                             cursor.getString(3),
@@ -141,6 +143,7 @@ public class DatabaseOperation {
                 /*setting history table */
                 insertHistory(context, "OFF", device_name, Util.getTime(), Util.getDate());
                 isTimeUpdateSuccess = UpdateLastOffTime(context, phoneNumber);
+                DatabaseOperation.UpdateDeviceOffTime(context, "Set Timer", phoneNumber);
 
             } else if (code.equals("SENSOR_ON")) {
 
@@ -152,12 +155,12 @@ public class DatabaseOperation {
                 contentValues.put("motion_enable", 0);
                 isTimeUpdateSuccess = true;
 
-            }else if(code.equals("CURRENT_ON")){
+            } else if (code.equals("CURRENT_ON")) {
 
                 contentValues.put("current_status", 1);
                 isTimeUpdateSuccess = true;
 
-            }else if(code.equals("CURRENT_OFF")){
+            } else if (code.equals("CURRENT_OFF")) {
 
                 contentValues.put("current_status", 0);
                 isTimeUpdateSuccess = true;
@@ -187,8 +190,48 @@ public class DatabaseOperation {
 
     }
 
+
+    public static int isDeviceOff(Context context, String phoneNumber){
+
+        Cursor cursor = null;
+
+        int deviceStatus = 0;
+
+        try {
+            SQLiteOpenHelper openHelper = new DatabaseHelper(context);
+
+            SQLiteDatabase database = openHelper.getReadableDatabase();
+
+            cursor = database.query("Device", new String[]{
+                    "status"
+            }, "phone_number=?", new String[]{phoneNumber}, null, null, null);
+
+            if (cursor != null && cursor.getCount() != 0) {
+
+                while (cursor.moveToNext()) {
+                    deviceStatus = cursor.getInt(0);
+                }
+
+            }
+        } catch (SQLiteException e) {
+
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+        } finally {
+
+            if (cursor != null)
+                cursor.close();
+        }
+
+
+        return deviceStatus;
+
+
+    }
+
     private static boolean UpdateLastOffTime(Context context, String phoneNumber) {
 
+        SQLiteDatabase database = null;
         boolean isSuccess;
 
         try {
@@ -201,7 +244,7 @@ public class DatabaseOperation {
 
             SQLiteOpenHelper databaseHelper = new DatabaseHelper(context);
 
-            SQLiteDatabase database = databaseHelper.getWritableDatabase();
+            database = databaseHelper.getWritableDatabase();
 
 
             database.update("Device", contentValues, "phone_number=?", new String[]{phoneNumber});
@@ -215,6 +258,11 @@ public class DatabaseOperation {
             Toast.makeText(context, s.getMessage(), Toast.LENGTH_SHORT).show();
 
         }
+
+
+        if (database != null)
+            database.close();
+
 
         return isSuccess;
 

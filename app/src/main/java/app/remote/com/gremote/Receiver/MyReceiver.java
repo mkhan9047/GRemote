@@ -14,11 +14,15 @@ public class MyReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String phone = intent.getStringExtra("phone");
-        String offCode = (String) String.valueOf(intent.getIntExtra("off_code", 1));
+        String offCode = intent.getStringExtra("off_code");
         // Log.e("MKPARAM", phone + offCode);
-        if (phone != null && !offCode.equals("1")) {
-            Util.sendSms(phone, String.valueOf(offCode));
-            DatabaseOperation.UpdateDeviceOffTime(context, "Unknown", phone);
+        if (phone != null && offCode != null) {
+            int deviceStatus = DatabaseOperation.isDeviceOff(context, phone);
+            if(deviceStatus == 1){
+                Util.sendSms(phone, String.valueOf(offCode));
+                DatabaseOperation.UpdateDeviceOffTime(context, "Unknown", phone);
+            }
+
         } else {
             Toast.makeText(context, "something went wrong!", Toast.LENGTH_SHORT).show();
         }

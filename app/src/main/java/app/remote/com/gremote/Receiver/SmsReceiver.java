@@ -52,11 +52,15 @@ public class SmsReceiver extends BroadcastReceiver {
 
                             if (isSucess) {
 
-                                devices = DatabaseOperation.getDevice(context);
+                             /*   devices = DatabaseOperation.getDevice(context);
 
                                 DeviceRecyclerAdapter adapter = new DeviceRecyclerAdapter(devices, (context));
 
-                                Dashboard.deviceRecyler.setAdapter(adapter);
+                                Dashboard.deviceRecyler.setAdapter(adapter);*/
+
+                             Intent intent1 = new Intent(context, Dashboard.class);
+                             intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                             context.startActivity(intent1);
 
                             }
 

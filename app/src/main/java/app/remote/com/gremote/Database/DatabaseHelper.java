@@ -44,6 +44,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 "current_status INTEGER, \n" +
 
+
+                "intent_number INTEGER, \n" +
+
                 "last_off TEXT, \n" +
 
                 "device_off_time TEXT \n" +
